@@ -1,28 +1,32 @@
-import scipy, numpy as np
+import scipy
+import numpy as np
 import scipy.io.wavfile as wavefile
+
 
 def stft(x, fftsize=1024, overlap=4):
     """Returns short time fourier transform of a signal x
     """
     hop = int(fftsize / overlap)
-    w = scipy.hanning(fftsize+1)[:-1]      # better reconstruction with this trick +1)[:-1]
+    w = scipy.signal.windows.hann(fftsize+1)[:-1]      # better reconstruction with this trick +1)[:-1]
     return np.array([np.fft.rfft(w*x[i:i+int(fftsize)]) for i in range(0, len(x)-int(fftsize), hop)])
+
 
 def istft(X, overlap=4):
     """Returns inverse short time fourier transform of a complex spectrum X
     """
     fftsize=(X.shape[1]-1)*2
     hop = int(fftsize / overlap)
-    w = scipy.hanning(fftsize+1)[:-1]
-    x = scipy.zeros(X.shape[0]*hop)
-    wsum = scipy.zeros(X.shape[0]*hop)
+    w = scipy.signal.windows.hann(fftsize+1)[:-1]
+    x = np.zeros(X.shape[0]*hop)
+    wsum = np.zeros(X.shape[0]*hop)
     for n,i in enumerate(range(0, len(x)-fftsize, hop)):
-        x[i:i+fftsize] += scipy.real(np.fft.irfft(X[n])) * w   # overlap-add
+        x[i:i+fftsize] += np.real(np.fft.irfft(X[n])) * w   # overlap-add
         wsum[i:i+fftsize] += w ** 2.
     #Could be improved
     #pos = wsum != 0
     #x[pos] /= wsum[pos]
     return x
+
 
 def reconstructWavFromSpectrogram(spec,lenWaveFile,fftsize=1024,overlap=4,numIterations=8):
     """Returns a reconstructed waveform from the spectrogram
@@ -38,7 +42,6 @@ def reconstructWavFromSpectrogram(spec,lenWaveFile,fftsize=1024,overlap=4,numIte
     #    print(spec.shape[0]-stft(reconstructedWav,fftsize=fftsize,overlap=overlap).shape[0])
     #    lenWaveFile += 1
     #    reconstructedWav = np.random.rand(lenWaveFile)
-
 
     for i in range(numIterations):
         x=stft(reconstructedWav,fftsize=fftsize,overlap=overlap)
