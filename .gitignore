@@ -163,5 +163,6 @@ cython_debug/
 # Link of data folder
 SingleWordProductionDutch-iBIDS
 
-# Processed features
+# Processed data
 features/
+results/
