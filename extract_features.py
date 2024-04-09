@@ -103,7 +103,7 @@ def downsampleLabels(labels, sr, windowLength=0.05, frameshift=0.01):
     for w in range(numWindows):
         start = int(np.floor((w*frameshift)*sr))
         stop = int(np.floor(start+windowLength*sr))
-        newLabels[w]=scipy.stats.mode(labels[start:stop])[0][0].encode("ascii", errors="ignore").decode()
+        newLabels[w]=np.unique(labels[start:stop])[0].encode("ascii", errors="ignore").decode()
     return newLabels
 
 def extractMelSpecs(audio, sr, windowLength=0.05, frameshift=0.01):
@@ -128,7 +128,7 @@ def extractMelSpecs(audio, sr, windowLength=0.05, frameshift=0.01):
         Logarithmic mel scaled spectrogram
     """
     numWindows=int(np.floor((audio.shape[0]-windowLength*sr)/(frameshift*sr)))
-    win = scipy.hanning(np.floor(windowLength*sr + 1))[:-1]
+    win = scipy.signal.windows.hann(int(np.floor(windowLength*sr + 1)))[:-1]
     spectrogram = np.zeros((numWindows, int(np.floor(windowLength*sr / 2 + 1))),dtype='complex')
     for w in range(numWindows):
         start_audio = int(np.floor((w*frameshift)*sr))
