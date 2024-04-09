@@ -1,3 +1,6 @@
+# flake8: noqa
+
+
 import os
 import numpy as np
 import matplotlib
@@ -87,9 +90,9 @@ if __name__=="__main__":
     rec_spec = np.load(os.path.join(result_path, f'{participant}_predicted_spec.npy'))
     spectrogram = np.load(os.path.join(feat_path, f'{participant}_spec.npy'))
     #Load prompted words
-    eeg_sr= 1024
+    eeg_sr= 100
     words = np.load(os.path.join(feat_path,f'{participant}_procWords.npy'))[int(start_s*eeg_sr):int(stop_s*eeg_sr)]
-    words = [words[w] for w in np.arange(1,len(words)) if words[w]!=words[w-1] and words[w]!='']
+    words = [words[w] for w in np.arange(1,len(words)) if words[w]!=words[w-1] and words[w]!=b'']
     
     cm='viridis'
     fig, ax = plt.subplots(2, sharex=True)
